@@ -1,0 +1,12 @@
+/interface vlan
+add interface=ether1 name=vlan300 vlan-id=300
+/ip dhcp-client
+add interface=vlan300 add-default-route=yes disabled=no use-peer-dns=no use-peer-ntp=no
+/interface bridge
+add name=local arp=proxy-arp
+/ip firewall filter
+add action=accept chain=input in-interface=vlan300 protocol=icmp
+add action=accept chain=input connection-state=established,related
+add action=drop chain=input in-interface=vlan300
+/ip firewall nat
+add action=masquerade chain=srcnat out-interface=vlan300
